@@ -1,17 +1,18 @@
 public class Main {
     public static void main(String[] args) {
 
-            String stringNumber = "Three hundred thousand five hundred";
-            String[] words = stringNumber.split(" ");
+        String stringNumber = "Two Billion Three Hundred Million";
+        String[] words = stringNumber.split(" ");
+        int count = 0;
 
-            String[] digitNumb = {
-                    "One", "Two", "Three", "Four", "Five",
-                    "Six", "Seven", "Eight", "Nine", "Ten",
-                    "Eleven", "Twelve", "Thirteen", "Fourteen",
-                    "Fifteen", "Sixteen", "Seventeen", "Eighteen",
-                    "Nineteen", "Twenty", "Thirty", "Forty",
-                    "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
-            };
+        String[] digitNumb = {
+                "One", "Two", "Three", "Four", "Five",
+                "Six", "Seven", "Eight", "Nine", "Ten",
+                "Eleven", "Twelve", "Thirteen", "Fourteen",
+                "Fifteen", "Sixteen", "Seventeen", "Eighteen",
+                "Nineteen", "Twenty", "Thirty", "Forty",
+                "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+        };
 
         String[] numberSuffixes = {
                 "Hundred",
@@ -33,97 +34,141 @@ public class Main {
         long[] stringSuffixes = {
                 100, 1000, 1000000, 1000000,
                 1000000000, 1000000000,
-                1000000000000000, 1000000000000000
+                1000000000, 1000000000
         };
 
-            int[] positionArr = new int[words.length];
-            boolean found = false;
+        int[] positionArr = new int[words.length];
+        boolean found = false;
 
-            for(int i = 0; i < words.length; i++) {
-                found=false;
+        for (int i = 0; i < words.length; i++) {
+            found = false;
 
-                for (int x = 0; x < numberSuffixes.length; x++) {
+            for (int x = 0; x < numberSuffixes.length; x++) {
 
-                    if (words[i].equalsIgnoreCase(numberSuffixes[x]) && !words[i].equalsIgnoreCase("Hundred")) {
+                if (words[i].equalsIgnoreCase(numberSuffixes[x]) && !words[i].equalsIgnoreCase("Hundred")) {
+                    positionArr[i] = 1;
+                    count++;
+                } else if (words[i].equalsIgnoreCase("Hundred")) {
+                    outer:
+                    for (int v = i + 1; v < words.length; v++) {
+                        for (int z = 0; z < numberSuffixes.length; z++) {
+
+                            if (words[v].equalsIgnoreCase(numberSuffixes[z]) && !words[v].equalsIgnoreCase("Hundred")) {
+                                count++;
+                                positionArr[v] = 1;
+                                found = true;
+                                break outer;
+                            }
+
+                        }
+                    }
+                    if (!found) {
                         positionArr[i] = 1;
-                    }
-
-                    else if (words[i].equalsIgnoreCase("Hundred")) {
-                        outer:
-                        for (int v = i+1; v < words.length; v++) {
-                            for (int z = 0; z < numberSuffixes.length; z++) {
-
-                                if (words[v].equalsIgnoreCase(numberSuffixes[z]) && !words[v].equalsIgnoreCase("Hundred")) {
-                                    positionArr[v] = 1;
-                                    found = true;
-                                    break outer;
-                                }
-
-                            }
-                        }
-                        if(!found){
-                            positionArr[i] = 1;
-                        }
-
-                    }
-
-                }
-            }
-
-            for(int i = 0; i<positionArr.length;i++){
-                System.out.println(i+1+":"+positionArr[i]);
-            }
-
-
-            int position;
-            int numb;
-            String varible = "";
-            int count = 0;
-
-            for (int i = 0; i < words.length; i++){
-                for(int y = 0; y < digitNumb.length; y++){
-
-                    if(words[i].equalsIgnoreCase(digitNumb[y])){
                         count++;
-                        if(count<2) {
-                            varible += stringNumb[y];
-                        }
-                        else {
-                            int parseNumb = 0;
-                            parseNumb = Integer.parseInt(varible);
-                            parseNumb += Integer.parseInt(stringNumb[y]);
-                            varible = String.valueOf(parseNumb);
-                        }
                     }
-
-
 
                 }
-
-                for(int x = 0; x < numberSuffixes.length; x++){
-                    if(words[i].equalsIgnoreCase(numberSuffixes[x]) && words[i].equalsIgnoreCase("Hundred")){
-                        for(i+=1; i < words.length; i++){
-                            if(words[i].equals(numberSuffixes) && !words[i].equalsIgnoreCase("Hundred")){
-                                position = i;
-                                break;
-                            }
-                            else {
-
-                            }
-
-
-                        }
-                            varible += stringSuffixes[x];
-                    }
-                    else if(words[i].equalsIgnoreCase(numberSuffixes[x]) ){
-                        varible += stringSuffixes[x];
-                    }
-                }
-
 
             }
+        }
 
-            System.out.println(varible);
+        for (int i = 0; i < positionArr.length; i++) {
+            System.out.println(i + 1 + ":" + positionArr[i]);
+        }
 
+
+        long[] resultArr = new long[count];
+        int tempResult = 0;
+        int index = 0;
+
+        for (int i = 0; i < words.length; i++) {
+
+            for (int y = 0; y < digitNumb.length; y++) {
+                if (words[i].equalsIgnoreCase(digitNumb[y])&&count==0) {
+                    tempResult += stringNumb[y];
+                }
+                else if (words[i].equalsIgnoreCase(digitNumb[y])) {
+                    tempResult += stringNumb[y];
+                }
+            }
+            for (int x = 0; x < numberSuffixes.length; x++) {
+                if (positionArr[i] == 1 && words[i].equalsIgnoreCase(numberSuffixes[x])) {
+                    tempResult *= stringSuffixes[x];
+                    resultArr[index] = tempResult;
+                    index++;
+                    tempResult = 0;
+                } else if (positionArr[i] == 0 && words[i].equalsIgnoreCase(numberSuffixes[x])) {
+                    tempResult *= stringSuffixes[x];
+                }
+            }
+        }
+        long sum = 0;
+        for(int i = 0; i<resultArr.length;i++)
+        {
+            sum += resultArr[i];
+        }
+        sum+=tempResult;
+        if(count == 0){
+            System.out.println("Number : "+tempResult);
+        }
+        else System.out.println("Number : "+sum);
     }
+
+
 }
+
+
+
+
+//
+//            int position;
+//            int numb;
+//            String varible = "";
+//            int count = 0;
+//
+//            for (int i = 0; i < words.length; i++){
+//                for(int y = 0; y < digitNumb.length; y++){
+//
+//                    if(words[i].equalsIgnoreCase(digitNumb[y])){
+//                        count++;
+//                        if(count<2) {
+//                            varible += stringNumb[y];
+//                        }
+//                        else {
+//                            int parseNumb = 0;
+//                            parseNumb = Integer.parseInt(varible);
+//                            parseNumb += Integer.parseInt(stringNumb[y]);
+//                            varible = String.valueOf(parseNumb);
+//                        }
+//                    }
+//
+//
+//
+//                }
+//
+//                for(int x = 0; x < numberSuffixes.length; x++){
+//                    if(words[i].equalsIgnoreCase(numberSuffixes[x]) && words[i].equalsIgnoreCase("Hundred")){
+//                        for(i+=1; i < words.length; i++){
+//                            if(words[i].equals(numberSuffixes) && !words[i].equalsIgnoreCase("Hundred")){
+//                                position = i;
+//                                break;
+//                            }
+//                            else {
+//
+//                            }
+//
+//
+//                        }
+//                            varible += stringSuffixes[x];
+//                    }
+//                    else if(words[i].equalsIgnoreCase(numberSuffixes[x]) ){
+//                        varible += stringSuffixes[x];
+//                    }
+//                }
+//
+//
+//            }
+
+
+
+
